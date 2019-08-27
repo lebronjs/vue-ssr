@@ -17,6 +17,7 @@ module.exports = merge(base, {
 	devtool: 'source-map',
 	externals: [nodeExternals()],
 	plugins: [
+		new VueSSRServerPlugin(), //还真是要放在最前面，不然HtmlWebpackPlugin不起作用
 		new HtmlWebpackPlugin({
 			template: path.resolve(__dirname, '../src/index.ssr.html'),
 			filename: 'index.ssr.html',
@@ -24,7 +25,6 @@ module.exports = merge(base, {
 				js: 'client.bundle.js'
 			},
 			excludeChunks: ['server']
-		}),
-		new VueSSRServerPlugin()
+		})
 	]
 })
