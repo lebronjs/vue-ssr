@@ -25,4 +25,45 @@
 <body>
 	<div class="bottom"></div>
 	<div class="top"></div>
+	<input type="file" name="test" id="sizeTest" onchange="selectFile(this.files)" />
+	<button id="replyBtn">click1</button>
+	<button onclick="clickHandle(event)">click2</button>
+	<script>
+		const replyBtn = document.querySelector('#replyBtn')
+		replyBtn.addEventListener('click', e => {
+			e.preventDefault()
+
+			console.log(123)
+		})
+		function clickHandle(event) {
+			console.log(123, event)
+		}
+		function imageSizeVerify(file) {
+			return new Promise(function(resolve, reject) {
+				let w = 300,
+					h = 300
+				let image = new Image()
+				let imageType = /^image\//
+
+				if (!imageType.test(file.type)) {
+					reject('不是图片')
+				}
+				image.onload = function() {
+					let valid = image.width == 300 && image.height == 300
+					valid ? resolve() : reject('图片尺寸不符合')
+				}
+				image.src = window.URL.createObjectURL(file)
+			})
+		}
+		function selectFile(files) {
+			imageSizeVerify(files[0]).then(
+				() => {
+					console.log(666)
+				},
+				error => {
+					console.log(error)
+				}
+			)
+		}
+	</script>
 </body>
