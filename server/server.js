@@ -25,7 +25,8 @@ process.on('unhandledRejection', (err, promise) => {
 	//process.nextTick(() => {})
 })
 // 后端Server
-backendRouter.get('/index', async (ctx, next) => {
+backendRouter.get('/', async (ctx, next) => {
+	console.log('后端：', ctx.req.url)
 	try {
 		// 这里直接使用 renderToString 的 Promise 模式，返回的 html 字符串没有样式和 __INITIAL_STATE__，原因暂时还没有查到
 		// 所以，只能暂时先自己封装一个 Promise，用 renderToString 的 callback 模式
@@ -46,21 +47,24 @@ backendRouter.get('/index', async (ctx, next) => {
 		ctx.body = '服务器内部错误'
 	}
 })
-backendApp.use(serve(path.resolve(__dirname, '../dist')))
+
 backendApp.use(backendRouter.routes()).use(backendRouter.allowedMethods())
+backendApp.use(serve(path.resolve(__dirname, '../dist')))
 backendApp.listen(5000, () => {
 	console.log('服务器端渲染地址： http://localhost:5000')
 })
 
 // 前端Server
-frontendRouter.get('/index', async (ctx, next) => {
+frontendRouter.get('/', async (ctx, next) => {
+	console.log('前端：', ctx.req.url)
 	let html = fs.readFileSync(path.resolve(__dirname, '../dist/index.html'), 'utf-8')
 	ctx.type = 'html'
 	ctx.status = 200
 	ctx.body = html
 })
-frontendApp.use(serve(path.resolve(__dirname, '../dist')))
+
 frontendApp.use(frontendRouter.routes()).use(frontendRouter.allowedMethods())
+frontendApp.use(serve(path.resolve(__dirname, '../dist')))
 frontendApp.listen(5001, () => {
 	console.log('浏览器端渲染地址： http://localhost:5001')
 })
